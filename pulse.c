@@ -14,11 +14,11 @@ int main(void) {
 
     double cpu_temp = cpuTemp();
 
-    if (cpu_temp == 0){
+    if (cpu_temp == TEMP_MISSING){
         printf("{\"uptime_s\": %.0f, \"mem_available_kb\": %ld, \"cpu_temp_c\": null}\n", up_seconds, mem_kb);
     } 
     else {
-        printf("{\"uptime_s\": %.0f, \"mem_available_kb\": %ld, \"cpu_temp_c\": %0f}\n", up_seconds, mem_kb, cpu_temp);
+        printf("{\"uptime_s\": %.0f, \"mem_available_kb\": %ld, \"cpu_temp_c\": %.1f}\n", up_seconds, mem_kb, cpu_temp);
     }
     return 0;
 }
@@ -60,20 +60,20 @@ long memory(void){
     return -1;
 }
 
-
-
 double cpuTemp(void){
     FILE *f = fopen ("/sys/class/thermal/thermal_zone0/temp", "r");
     if (f == NULL){
-        return 0;
+        return TEMP_MISSING;
     }
 
-    double cpu_temp;
-    if (fscanf(f, "%lf", &cpu_temp) != 1){
+    double millideg;
+    if (fscanf(f, "%lf", &millideg) != 1){
         fclose(f);
-        return -1;
+        return TEMP_MISSING;
     }
+
     fclose(f);
-    cpu_temp = cpu_temp / 1000.0;
+
+    double cpu_temp = millideg / 1000.0;
     return cpu_temp;
 }
