@@ -1,9 +1,14 @@
+#!/usr/bin/env python3
 # api.py - serves the latest Pulse reading over HTTP
-import json, sqlite3
+
+import json, sqlite3, os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+DB_PATH = os.environ.get("PULSE_DB", "pulse.db")
+PULSE_BIN = os.environ.get("PULSE_BIN", "pulse")
+
 def latest_reading():
-    conn = sqlite3.connect("pulse.db")
+    conn = sqlite3.connect(DB_PATH)
     row = conn.execute("SELECT timestamp, uptime_s, mem_available_kb, cpu_temp_c FROM readings ORDER BY timestamp DESC LIMIT 1;").fetchone()
     conn.close()
     if row is None:

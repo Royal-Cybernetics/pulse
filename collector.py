@@ -1,8 +1,13 @@
+#!/usr/bin/env python3
 # collector.py collects data from pulse.c
-import json, subprocess, time, sqlite3
+
+import json, subprocess, time, sqlite3, os
 from datetime import datetime
 
-conn = sqlite3.connect("pulse.db")
+DB_PATH = os.environ.get("PULSE_DB", "pulse.db")
+PULSE_BIN = os.environ.get("PULSE_BIN", "pulse")
+
+conn = sqlite3.connect(DB_PATH)
 conn.execute(
 """
     CREATE TABLE IF NOT EXISTS readings (
@@ -17,7 +22,7 @@ conn.commit()
 
 try:
     while True: 
-        result = subprocess.run(["./pulse"], capture_output=True, text=True, check=True)
+        result = subprocess.run([PULSE_BIN], capture_output=True, text=True, check=True)
         data = json.loads(result.stdout)
 
         conn.execute(
