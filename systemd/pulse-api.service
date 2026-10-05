@@ -1,0 +1,14 @@
+[Unit]
+Description=Pulse status API
+After=pulse-collector.service
+
+[Service]
+User=pulse
+Group=pulse
+Environment=PULSE_DB=/var/lib/pulse/pulse.db
+ExecStart=/usr/local/bin/pulse-api
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

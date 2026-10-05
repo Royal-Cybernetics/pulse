@@ -1,0 +1,14 @@
+[Unit]
+Description=Pulse system vitals collector
+
+[Service]
+User=pulse
+Group=pulse
+Environment=PULSE_DB=/var/lib/pulse/pulse.db
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/local/bin/pulse-collector
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
